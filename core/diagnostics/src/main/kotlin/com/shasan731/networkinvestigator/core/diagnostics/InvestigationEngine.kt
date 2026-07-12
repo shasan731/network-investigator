@@ -46,7 +46,7 @@ class InvestigationEngine(private val concurrency: Int = 4) {
                 }
             } else {
                 add {
-                    val target = parsed.target
+                    val target = parsed.target as InvestigationTarget.Cidr
                     val startedAt = System.currentTimeMillis()
                     val subnet = SubnetCalculator.calculate(target.address, target.prefixLength)
                     DiagnosticCard(DiagnosticTaskType.SUBNET, DiagnosticStatus.SUCCESS, "Subnet calculation", "${subnet.networkAddress}/${target.prefixLength}", "${subnet.totalAddresses} addresses; usable ${subnet.firstUsable} – ${subnet.lastUsable}", null, ResultSource.LOCAL_CALCULATION, startedAt, System.currentTimeMillis() - startedAt)
