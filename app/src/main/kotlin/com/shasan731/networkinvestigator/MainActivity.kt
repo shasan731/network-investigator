@@ -77,6 +77,7 @@ private val topDestinations = listOf(
 private val moduleSpecs = listOf(TargetIntelligenceFeature.spec, NetworkToolsFeature.spec, WebsiteInvestigatorFeature.spec, DnsDetectiveFeature.spec, LanExplorerFeature.spec, WifiDiagnosticsFeature.spec, RouteInvestigatorFeature.spec, TlsInvestigatorFeature.spec, PortInspectorFeature.spec, NetworkCompareFeature.spec, EvidenceCollectorFeature.spec)
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun InvestigatorApp(vm: MainViewModel, features: FeatureViewModel) {
     val nav = rememberNavController(); val entry by nav.currentBackStackEntryAsState(); val route = entry?.destination?.route
     BoxWithConstraints { val wide = maxWidth >= 840.dp

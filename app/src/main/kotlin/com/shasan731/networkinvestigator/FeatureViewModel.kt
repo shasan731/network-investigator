@@ -78,8 +78,9 @@ class FeatureViewModel @Inject constructor(
     fun trace(host: String) = launch("route", _route) { ProcessRouteProbe().trace(host).valueOrThrow() }
     fun scanLan(cidr: String) {
         val parsed = TargetParser.parse(cidr); if (parsed !is TargetParseResult.Valid || parsed.parsed.target !is InvestigationTarget.Cidr) { _lan.value = FeatureOperationState(error = "Enter a valid IPv4 CIDR."); return }
+        val target = parsed.parsed.target as InvestigationTarget.Cidr
         launch("lan", _lan) {
-            val results = BoundedLanScanner().scan(parsed.parsed.target)
+            val results = BoundedLanScanner().scan(target)
             results.forEach { host -> lanDao.saveObservation(LanDeviceEntity(ipAddress = host.address, hostname = host.reverseName, macAddress = null, userLabel = null, notes = null, category = "UNKNOWN", confidence = "LOW", firstSeen = host.firstObservedAt, lastSeen = host.firstObservedAt)) }
             results
         }

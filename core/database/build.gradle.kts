@@ -2,7 +2,7 @@ plugins { id("network.android.library"); alias(libs.plugins.ksp); alias(libs.plu
 android { namespace = "com.shasan731.networkinvestigator.core.database" }
 dependencies {
     implementation(project(":core:model"))
-    implementation(libs.room.runtime)
+    api(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.serialization.json)
     ksp(libs.room.compiler)

@@ -22,11 +22,11 @@ class AppPreferences(private val context: Context) {
         val storedRetention = p[Keys.retention]
         UserSettings(ThemePreference.entries.firstOrNull { it.name == p[Keys.theme] } ?: ThemePreference.SYSTEM, p[Keys.dynamic] ?: true, p[Keys.offline] ?: true, p[Keys.enrichment] ?: false, when { storedRetention == null -> 90; storedRetention <= 0 -> null; else -> storedRetention }, p[Keys.concurrency] ?: 4, p[Keys.biometric] ?: false)
     }
-    suspend fun setOfflineOnly(value: Boolean) = context.dataStore.edit { it[Keys.offline] = value; if (value) it[Keys.enrichment] = false }
-    suspend fun setTheme(value: ThemePreference) = context.dataStore.edit { it[Keys.theme] = value.name }
-    suspend fun setDynamicColor(value: Boolean) = context.dataStore.edit { it[Keys.dynamic] = value }
-    suspend fun setOnlineEnrichment(value: Boolean) = context.dataStore.edit { it[Keys.enrichment] = value; if (value) it[Keys.offline] = false }
-    suspend fun setRetentionDays(value: Int?) = context.dataStore.edit { it[Keys.retention] = value ?: -1 }
-    suspend fun setBiometricLock(value: Boolean) = context.dataStore.edit { it[Keys.biometric] = value }
-    suspend fun clearAll() = context.dataStore.edit { it.clear() }
+    suspend fun setOfflineOnly(value: Boolean) { context.dataStore.edit { it[Keys.offline] = value; if (value) it[Keys.enrichment] = false } }
+    suspend fun setTheme(value: ThemePreference) { context.dataStore.edit { it[Keys.theme] = value.name } }
+    suspend fun setDynamicColor(value: Boolean) { context.dataStore.edit { it[Keys.dynamic] = value } }
+    suspend fun setOnlineEnrichment(value: Boolean) { context.dataStore.edit { it[Keys.enrichment] = value; if (value) it[Keys.offline] = false } }
+    suspend fun setRetentionDays(value: Int?) { context.dataStore.edit { it[Keys.retention] = value ?: -1 } }
+    suspend fun setBiometricLock(value: Boolean) { context.dataStore.edit { it[Keys.biometric] = value } }
+    suspend fun clearAll() { context.dataStore.edit { it.clear() } }
 }
