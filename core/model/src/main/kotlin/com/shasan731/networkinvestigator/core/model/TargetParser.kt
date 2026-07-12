@@ -17,6 +17,7 @@ object TargetParser {
         if (input.startsWith("http://", true) || input.startsWith("https://", true)) return parseUrl(input)
         if (input.startsWith('[')) return parseBracketedHostPort(input)
         parseIpv4(input)?.let { return TargetParseResult.Valid(ParsedTarget(InvestigationTarget.Ipv4(it), IpClassifier.classifyIpv4(it))) }
+        if (looksLikeIpv4(input)) return invalid(DiagnosticErrorCode.INVALID_TARGET, "The IPv4 address is malformed.", raw)
         parseIpv6(input)?.let { return TargetParseResult.Valid(ParsedTarget(InvestigationTarget.Ipv6(it), IpClassifier.classifyIpv6(it))) }
 
         val colonCount = input.count { it == ':' }
@@ -61,6 +62,7 @@ object TargetParser {
     private fun parseHostPort(hostInput: String, portText: String, original: String): TargetParseResult {
         val port = parsePort(portText, original) ?: return invalid(DiagnosticErrorCode.INVALID_PORT, "Port must be between 1 and 65535.", original)
         parseIpv4(hostInput)?.let { return TargetParseResult.Valid(ParsedTarget(InvestigationTarget.HostPort(it, port), IpClassifier.classifyIpv4(it))) }
+        if (looksLikeIpv4(hostInput)) return invalid(DiagnosticErrorCode.INVALID_TARGET, "The IPv4 address is malformed.", original)
         val host = normalizeHost(hostInput)
         if (!isValidHost(host)) return invalid(DiagnosticErrorCode.INVALID_TARGET, "The host is malformed.", original)
         return TargetParseResult.Valid(ParsedTarget(InvestigationTarget.HostPort(host, port)))
@@ -90,6 +92,7 @@ object TargetParser {
 
     private fun normalizeHost(host: String): String = IDN.toASCII(host.trimEnd('.'), IDN.USE_STD3_ASCII_RULES).lowercase()
     private fun isValidHost(host: String): Boolean = host.length in 1..253 && host.split('.').all { it.length in 1..63 && hostnameLabel.matches(it) }
+    private fun looksLikeIpv4(value: String): Boolean = value.split('.').let { parts -> parts.size == 4 && parts.all { it.isNotEmpty() && it.all(Char::isDigit) } }
     private fun parsePort(text: String, original: String): Int? = text.toIntOrNull()?.takeIf { it in 1..65535 }
 
     fun parseIpv4(value: String): String? {
